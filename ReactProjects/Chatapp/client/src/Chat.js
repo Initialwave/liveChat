@@ -17,16 +17,16 @@ function Chat({ socket, username, room }) {
       };
 
       await socket.emit("send_message", messageData);
-      setMessageList((list) => [...list, messageData])
+      setMessageList(list => [...list, messageData]);
     }
   };
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
-      setMessageList((list) => [...list, data])
+    socket.on("receive_message", data => {
+      setMessageList(list => [...list, data]);
       console.log(data);
     });
-  }, [socket])
+  }, [socket]);
 
   return (
     <div className="chat-window">
@@ -34,17 +34,19 @@ function Chat({ socket, username, room }) {
         <p>Chatting</p>
       </div>
       <div className="chat-body">
-        {messageList.map((messageContent) => {
+        {messageList.map(messageContent => {
           return (
-            <div className="message">
-
+            <div
+              className="message"
+              id={username === messageContent.author ? "other" : "you"}
+            >
               <div>
                 <div classname="message-content">
                   <p>{messageContent.message}</p>
                 </div>
                 <div classname="message-meta">
-                  <p>{messageContent.time}</p>
-                  <p>{messageContent.author}</p>
+                  <p id="time">{messageContent.time}</p>
+                  <p id="author">{messageContent.author}</p>
                 </div>
               </div>
             </div>
@@ -57,6 +59,9 @@ function Chat({ socket, username, room }) {
           placeholder="type..."
           onChange={event => {
             setCurrentMessage(event.target.value);
+          }}
+          onKeyDown={event => {
+            event.key === "Enter" && sendMessage();
           }}
         />
         <button onClick={sendMessage}>&#9658;</button>
